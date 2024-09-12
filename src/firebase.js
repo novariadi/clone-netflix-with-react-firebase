@@ -3,6 +3,7 @@ import { initializeApp } from "firebase/app";
 import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { addDoc, collection, getFirestore } from "firebase/firestore";
 import { api_Key, app_id, auth_domain, messaging_sender_id, project_id, storage_bucket } from "./utils/constant";
+import { toast } from "react-toastify";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -25,17 +26,16 @@ const signup = async (name, email, password) => {
     try {
         const response = await createUserWithEmailAndPassword(auth, email, password);
         const user = response.user;
-        // console.log(user)
         const a = await addDoc(collection(db, "users"), {
             uid: user.uid,
             name,
             authProvider: "local",
             email
         })
-        console.log(a)
     } catch (error) {
         console.log(error);
-        alert(error)
+        toast.error(error.code.split('/')[1].split('-').join(" "));
+
     }
 }
 
@@ -44,7 +44,7 @@ const login = async (email, password) => {
         await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
         console.log(error)
-        alert(error)
+        toast.error(error.code.split('/')[1].split('-').join(" "));
     }
 }
 
